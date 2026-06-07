@@ -1,0 +1,40 @@
+//tabel obat
+create table obat (
+id_obat int auto_increment primary key,
+nama_obat varchar(30) not null, 
+kategory_obat varchar(30) not null,
+harga decimal (12,2) not null, 
+stok int not null default 0,
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+//tabel supplier
+create table supplier (
+id_supplier int auto_increment primary key,
+nama_supplier varchar(30) not null,
+alamat text,
+telepon varchar(20), 
+created_at timestamp default current_timestamp
+);
+
+//tabel pelanggan
+create table pelanggan (
+id_pelanggan int auto_increment primary key,
+nama_pelanggan varchar(30) not null,
+telepon varchar(20),
+created_at timestamp default current_timestamp
+);
+
+//tabel penjualan 
+create table penjualan (
+id_penjualan int auto_increment primary key,
+id_pelanggan int not null,
+id_obat int not null,
+jumlah int not null,
+harga_satuan decimal(12,2) not null,
+subtotal decimal(12,2) not null,
+tanggal datetime default current_timestamp,
+
+constraint fk_penjualan_pelanggan foreign key (id_pelanggan) references pelanggan(id_pelanggan) on update cascade,
+constraint fk_penjualan_obat foreign key (id_obat) references obat(id_obat) on update cascade
+);
