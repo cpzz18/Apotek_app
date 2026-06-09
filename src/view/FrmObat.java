@@ -276,6 +276,8 @@ public class FrmObat extends javax.swing.JFrame {
 
         jLabel3.setText("Nama Obat");
 
+        txtNamaObat.addActionListener(this::txtNamaObatActionPerformed);
+
         jLabel4.setText("Kategori");
 
         jLabel5.setText("Harga");
@@ -691,6 +693,10 @@ public class FrmObat extends javax.swing.JFrame {
         evt.consume();
     }
     }//GEN-LAST:event_txtStokKeyTyped
+
+    private void txtNamaObatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNamaObatActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtNamaObatActionPerformed
 
     public static void main(String args[]) {
           java.awt.EventQueue.invokeLater(() -> new FrmObat().setVisible(true));
