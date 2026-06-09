@@ -14,7 +14,7 @@ public class Koneksi{
         try {
             String url = "jdbc:mysql://localhost:3306/db_apotek";
             String user = "root";
-            String pass = "";
+            String pass = "root";
             
             return DriverManager.getConnection(url, user, pass);
         }catch (Exception e){

@@ -15,17 +15,18 @@ public class FrmObat extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FrmObat.class.getName());
     public FrmObat() {
-        initComponents();
+       initComponents();
         loadKategori();
         loadTable();
         resetForm();
+        txtIdObat.setEditable(false);
     }
 
     @SuppressWarnings("unchecked")
     
     private boolean validasiInput() {
 
-    if (txtNamaObat.getText().trim().isEmpty()) {
+      if (txtNamaObat.getText().trim().isEmpty()) {
 
         JOptionPane.showMessageDialog(this,
                 "Nama obat wajib diisi!");
@@ -98,19 +99,20 @@ public class FrmObat extends javax.swing.JFrame {
 
     return true;
 }
-     private void resetForm() {
+    private void resetForm() {
 
-   txtIdObat.setText("");
+  txtIdObat.setText("");
     txtNamaObat.setText("");
 
     cmbKategori.setSelectedIndex(0);
 
     txtHarga.setText("");
     txtStok.setText("");
+    txtCari.setText("");
 
     txtNamaObat.requestFocus();
-}
-     private void loadKategori() {
+    }
+    private void loadKategori() {
 
     cmbKategori.removeAllItems();
 
@@ -125,13 +127,22 @@ public class FrmObat extends javax.swing.JFrame {
      
     private void loadTable() {
 
-    DefaultTableModel model = new DefaultTableModel();
-
-    model.addColumn("ID");
-    model.addColumn("Nama Obat");
-    model.addColumn("Kategori");
-    model.addColumn("Harga");
-    model.addColumn("Stok");
+    
+    DefaultTableModel model = new DefaultTableModel(
+        new Object[][]{},
+        new String[]{
+            "ID",
+            "Nama Obat",
+            "Kategori",
+            "Harga",
+            "Stok"
+        }
+    ) {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false;
+        }
+    };
 
     try {
 
@@ -149,13 +160,14 @@ public class FrmObat extends javax.swing.JFrame {
                 rs.getInt("id_obat"),
                 rs.getString("nama_obat"),
                 rs.getString("kategori"),
-                rs.getDouble("harga"),
+                String.format("Rp %,d", rs.getInt("harga")),
                 rs.getInt("stok")
             });
 
         }
 
         tblObat.setModel(model);
+        tblObat.setRowHeight(25);
 
     } catch (Exception e) {
 
@@ -167,7 +179,7 @@ public class FrmObat extends javax.swing.JFrame {
     
     private void cariObat() {
 
-    DefaultTableModel model = new DefaultTableModel();
+        DefaultTableModel model = new DefaultTableModel();
 
     model.addColumn("ID");
     model.addColumn("Nama Obat");
@@ -203,7 +215,7 @@ public class FrmObat extends javax.swing.JFrame {
                 rs.getInt("id_obat"),
                 rs.getString("nama_obat"),
                 rs.getString("kategori"),
-                rs.getDouble("harga"),
+               String.format("Rp %,d", rs.getInt("harga")),
                 rs.getInt("stok")
             });
 
@@ -221,6 +233,8 @@ public class FrmObat extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jFrame1 = new javax.swing.JFrame();
+        canvas1 = new java.awt.Canvas();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         txtIdObat = new javax.swing.JTextField();
@@ -242,6 +256,17 @@ public class FrmObat extends javax.swing.JFrame {
         btnReset = new javax.swing.JButton();
         cmbKategori = new javax.swing.JComboBox<>();
 
+        javax.swing.GroupLayout jFrame1Layout = new javax.swing.GroupLayout(jFrame1.getContentPane());
+        jFrame1.getContentPane().setLayout(jFrame1Layout);
+        jFrame1Layout.setHorizontalGroup(
+            jFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 400, Short.MAX_VALUE)
+        );
+        jFrame1Layout.setVerticalGroup(
+            jFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 300, Short.MAX_VALUE)
+        );
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -251,13 +276,26 @@ public class FrmObat extends javax.swing.JFrame {
 
         jLabel3.setText("Nama Obat");
 
+        txtNamaObat.addActionListener(this::txtNamaObatActionPerformed);
+
         jLabel4.setText("Kategori");
 
         jLabel5.setText("Harga");
 
         txtHarga.addActionListener(this::txtHargaActionPerformed);
+        txtHarga.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtHargaKeyTyped(evt);
+            }
+        });
 
         jLabel6.setText("Stok");
+
+        txtStok.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtStokKeyTyped(evt);
+            }
+        });
 
         btnSimpan.setText("Simpan");
         btnSimpan.addActionListener(this::btnSimpanActionPerformed);
@@ -271,6 +309,11 @@ public class FrmObat extends javax.swing.JFrame {
         jLabel7.setText("Cari Obat");
 
         txtCari.addActionListener(this::txtCariActionPerformed);
+        txtCari.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtCariKeyReleased(evt);
+            }
+        });
 
         tblObat.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -283,6 +326,15 @@ public class FrmObat extends javax.swing.JFrame {
                 "ID", "Nama Obat", "Kategori", "Harga", "Stok"
             }
         ));
+        tblObat.addAncestorListener(new javax.swing.event.AncestorListener() {
+            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
+                tblObatAncestorAdded(evt);
+            }
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
+            }
+            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
+            }
+        });
         tblObat.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tblObatMouseClicked(evt);
@@ -304,27 +356,17 @@ public class FrmObat extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(187, 187, 187)
-                .addComponent(jLabel1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(36, 36, 36)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnSimpan)
-                        .addGap(37, 37, 37)
-                        .addComponent(btnUbah)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnHapus)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnReset)
-                        .addGap(16, 16, 16))
+                        .addGap(187, 187, 187)
+                        .addComponent(jLabel1))
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(36, 36, 36)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(187, 187, 187)
                                 .addComponent(jLabel8))
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
@@ -344,8 +386,16 @@ public class FrmObat extends javax.swing.JFrame {
                                             .addComponent(txtNamaObat)
                                             .addComponent(txtHarga)
                                             .addComponent(txtStok)
-                                            .addComponent(cmbKategori, 0, 320, Short.MAX_VALUE))))))
-                        .addContainerGap(62, Short.MAX_VALUE))))
+                                            .addComponent(cmbKategori, 0, 320, Short.MAX_VALUE))))
+                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                    .addComponent(btnSimpan)
+                                    .addGap(29, 29, 29)
+                                    .addComponent(btnUbah)
+                                    .addGap(26, 26, 26)
+                                    .addComponent(btnHapus)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(btnReset))))))
+                .addContainerGap(62, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -372,17 +422,18 @@ public class FrmObat extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel6)
                     .addComponent(txtStok, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(36, 36, 36)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnSimpan)
-                    .addComponent(btnUbah)
-                    .addComponent(btnHapus)
-                    .addComponent(btnReset))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
+                .addGap(34, 34, 34)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnUbah, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnReset, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel7))
-                .addGap(28, 28, 28)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel8)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -443,7 +494,7 @@ public class FrmObat extends javax.swing.JFrame {
 
     private void btnUbahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUbahActionPerformed
          
-    if (txtIdObat.getText().trim().isEmpty()) {
+     if (txtIdObat.getText().trim().isEmpty()) {
 
         JOptionPane.showMessageDialog(this,
                 "Pilih data obat terlebih dahulu!");
@@ -523,7 +574,7 @@ public class FrmObat extends javax.swing.JFrame {
     }//GEN-LAST:event_btnUbahActionPerformed
 
     private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
-        if (txtIdObat.getText().trim().isEmpty()) {
+         if (txtIdObat.getText().trim().isEmpty()) {
 
         JOptionPane.showMessageDialog(this,
                 "Pilih data yang akan dihapus!");
@@ -577,11 +628,19 @@ public class FrmObat extends javax.swing.JFrame {
     txtNamaObat.setText(
             tblObat.getValueAt(row, 1).toString());
 
-    txtHarga.setText(
+    cmbKategori.setSelectedItem(
             tblObat.getValueAt(row, 2).toString());
 
+    String harga = tblObat.getValueAt(row, 3)
+            .toString()
+            .replace("Rp", "")
+            .replace(",", "")
+            .trim();
+
+    txtHarga.setText(harga);
+
     txtStok.setText(
-            tblObat.getValueAt(row, 3).toString());
+            tblObat.getValueAt(row, 4).toString());
     }//GEN-LAST:event_tblObatMouseClicked
 
     
@@ -603,8 +662,44 @@ public class FrmObat extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_cmbKategoriActionPerformed
 
+    private void tblObatAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_tblObatAncestorAdded
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tblObatAncestorAdded
+
+    private void txtCariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCariKeyReleased
+        // TODO add your handling code here:
+        if(txtCari.getText().trim().isEmpty()){
+        loadTable();
+        return;
+    }
+
+    cariObat();
+    }//GEN-LAST:event_txtCariKeyReleased
+
+    private void txtHargaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtHargaKeyTyped
+        // TODO add your handling code here:
+           char c = evt.getKeyChar();
+
+    if (!Character.isDigit(c)) {
+        evt.consume();
+    }
+    }//GEN-LAST:event_txtHargaKeyTyped
+
+    private void txtStokKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtStokKeyTyped
+        // TODO add your handling code here:
+         char c = evt.getKeyChar();
+
+    if (!Character.isDigit(c)) {
+        evt.consume();
+    }
+    }//GEN-LAST:event_txtStokKeyTyped
+
+    private void txtNamaObatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNamaObatActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtNamaObatActionPerformed
+
     public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(() -> new FrmObat().setVisible(true));
+          java.awt.EventQueue.invokeLater(() -> new FrmObat().setVisible(true));
     }
         
 
@@ -613,7 +708,9 @@ public class FrmObat extends javax.swing.JFrame {
     private javax.swing.JButton btnReset;
     private javax.swing.JButton btnSimpan;
     private javax.swing.JButton btnUbah;
+    private java.awt.Canvas canvas1;
     private javax.swing.JComboBox<String> cmbKategori;
+    private javax.swing.JFrame jFrame1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
