@@ -15,17 +15,18 @@ public class FrmObat extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FrmObat.class.getName());
     public FrmObat() {
-        initComponents();
+       initComponents();
         loadKategori();
         loadTable();
         resetForm();
+        txtIdObat.setEditable(false);
     }
 
     @SuppressWarnings("unchecked")
     
     private boolean validasiInput() {
 
-    if (txtNamaObat.getText().trim().isEmpty()) {
+      if (txtNamaObat.getText().trim().isEmpty()) {
 
         JOptionPane.showMessageDialog(this,
                 "Nama obat wajib diisi!");
@@ -98,19 +99,20 @@ public class FrmObat extends javax.swing.JFrame {
 
     return true;
 }
-     private void resetForm() {
+    private void resetForm() {
 
-   txtIdObat.setText("");
+  txtIdObat.setText("");
     txtNamaObat.setText("");
 
     cmbKategori.setSelectedIndex(0);
 
     txtHarga.setText("");
     txtStok.setText("");
+    txtCari.setText("");
 
     txtNamaObat.requestFocus();
-}
-     private void loadKategori() {
+    }
+    private void loadKategori() {
 
     cmbKategori.removeAllItems();
 
@@ -125,13 +127,22 @@ public class FrmObat extends javax.swing.JFrame {
      
     private void loadTable() {
 
-    DefaultTableModel model = new DefaultTableModel();
-
-    model.addColumn("ID");
-    model.addColumn("Nama Obat");
-    model.addColumn("Kategori");
-    model.addColumn("Harga");
-    model.addColumn("Stok");
+    
+    DefaultTableModel model = new DefaultTableModel(
+        new Object[][]{},
+        new String[]{
+            "ID",
+            "Nama Obat",
+            "Kategori",
+            "Harga",
+            "Stok"
+        }
+    ) {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false;
+        }
+    };
 
     try {
 
@@ -149,13 +160,14 @@ public class FrmObat extends javax.swing.JFrame {
                 rs.getInt("id_obat"),
                 rs.getString("nama_obat"),
                 rs.getString("kategori"),
-                rs.getDouble("harga"),
+                String.format("Rp %,d", rs.getInt("harga")),
                 rs.getInt("stok")
             });
 
         }
 
         tblObat.setModel(model);
+        tblObat.setRowHeight(25);
 
     } catch (Exception e) {
 
@@ -167,7 +179,7 @@ public class FrmObat extends javax.swing.JFrame {
     
     private void cariObat() {
 
-    DefaultTableModel model = new DefaultTableModel();
+        DefaultTableModel model = new DefaultTableModel();
 
     model.addColumn("ID");
     model.addColumn("Nama Obat");
@@ -203,7 +215,7 @@ public class FrmObat extends javax.swing.JFrame {
                 rs.getInt("id_obat"),
                 rs.getString("nama_obat"),
                 rs.getString("kategori"),
-                rs.getDouble("harga"),
+               String.format("Rp %,d", rs.getInt("harga")),
                 rs.getInt("stok")
             });
 
@@ -269,8 +281,19 @@ public class FrmObat extends javax.swing.JFrame {
         jLabel5.setText("Harga");
 
         txtHarga.addActionListener(this::txtHargaActionPerformed);
+        txtHarga.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtHargaKeyTyped(evt);
+            }
+        });
 
         jLabel6.setText("Stok");
+
+        txtStok.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtStokKeyTyped(evt);
+            }
+        });
 
         btnSimpan.setText("Simpan");
         btnSimpan.addActionListener(this::btnSimpanActionPerformed);
@@ -284,6 +307,11 @@ public class FrmObat extends javax.swing.JFrame {
         jLabel7.setText("Cari Obat");
 
         txtCari.addActionListener(this::txtCariActionPerformed);
+        txtCari.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtCariKeyReleased(evt);
+            }
+        });
 
         tblObat.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -464,7 +492,7 @@ public class FrmObat extends javax.swing.JFrame {
 
     private void btnUbahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUbahActionPerformed
          
-    if (txtIdObat.getText().trim().isEmpty()) {
+     if (txtIdObat.getText().trim().isEmpty()) {
 
         JOptionPane.showMessageDialog(this,
                 "Pilih data obat terlebih dahulu!");
@@ -544,7 +572,7 @@ public class FrmObat extends javax.swing.JFrame {
     }//GEN-LAST:event_btnUbahActionPerformed
 
     private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
-        if (txtIdObat.getText().trim().isEmpty()) {
+         if (txtIdObat.getText().trim().isEmpty()) {
 
         JOptionPane.showMessageDialog(this,
                 "Pilih data yang akan dihapus!");
@@ -590,7 +618,7 @@ public class FrmObat extends javax.swing.JFrame {
     }//GEN-LAST:event_btnHapusActionPerformed
 
     private void tblObatMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblObatMouseClicked
-         int row = tblObat.getSelectedRow();
+        int row = tblObat.getSelectedRow();
 
     txtIdObat.setText(
             tblObat.getValueAt(row, 0).toString());
@@ -636,8 +664,36 @@ public class FrmObat extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_tblObatAncestorAdded
 
+    private void txtCariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCariKeyReleased
+        // TODO add your handling code here:
+        if(txtCari.getText().trim().isEmpty()){
+        loadTable();
+        return;
+    }
+
+    cariObat();
+    }//GEN-LAST:event_txtCariKeyReleased
+
+    private void txtHargaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtHargaKeyTyped
+        // TODO add your handling code here:
+           char c = evt.getKeyChar();
+
+    if (!Character.isDigit(c)) {
+        evt.consume();
+    }
+    }//GEN-LAST:event_txtHargaKeyTyped
+
+    private void txtStokKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtStokKeyTyped
+        // TODO add your handling code here:
+         char c = evt.getKeyChar();
+
+    if (!Character.isDigit(c)) {
+        evt.consume();
+    }
+    }//GEN-LAST:event_txtStokKeyTyped
+
     public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(() -> new FrmObat().setVisible(true));
+          java.awt.EventQueue.invokeLater(() -> new FrmObat().setVisible(true));
     }
         
 
